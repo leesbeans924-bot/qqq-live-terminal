@@ -506,79 +506,9 @@
 <script>
 const TODAY_STR = new Date().toLocaleDateString('en-US', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
 
-const PROMPT = `Today is ${TODAY_STR}. You are a professional financial data analyst. Search the web for the most current available data on QQQ and return ONLY a valid JSON object — no markdown backticks, no explanation text, just raw JSON.
-
-Search for: QQQ current price, top 15 holdings with prices, VIX level, upcoming economic events this week.
-
-Return exactly this JSON structure:
-{
-  "qqq": {
-    "price": <number>,
-    "change": <number>,
-    "changePct": <number>,
-    "volume": "<e.g. 45.2M>",
-    "avgVolume": "<e.g. 42.0M>",
-    "dayHigh": <number>,
-    "dayLow": <number>,
-    "week52High": <number>,
-    "week52Low": <number>,
-    "marketStatus": "<open|closed|pre-market|after-hours>"
-  },
-  "vix": {
-    "value": <number>,
-    "change": <number>,
-    "signal": "<Low Volatility|Moderate|Elevated|High Fear>"
-  },
-  "holdings": [
-    {
-      "symbol": "<string>",
-      "name": "<company name>",
-      "weight": <number>,
-      "price": <number>,
-      "change": <number>,
-      "changePct": <number>,
-      "signal": "<bullish|bearish|neutral>"
-    }
-  ],
-  "technicals": {
-    "trend": "<Strong Uptrend|Uptrend|Sideways|Downtrend|Strong Downtrend>",
-    "rsi": <number>,
-    "macdSignal": "<bullish|bearish|neutral>",
-    "support": [<number>, <number>],
-    "resistance": [<number>, <number>],
-    "aboveMA20": <true|false>,
-    "aboveMA50": <true|false>,
-    "aboveMA200": <true|false>,
-    "volumeSignal": "<Above Average|Average|Below Average>"
-  },
-  "prediction": {
-    "direction": "<bullish|bearish|neutral>",
-    "target1": <number>,
-    "target2": <number>,
-    "stopLoss": <number>,
-    "confidence": <integer 0-100>,
-    "reasoning": "<2-3 sentence technical and macro analysis>",
-    "patterns": ["<pattern>", "<pattern>"]
-  },
-  "optionsSentiment": {
-    "putCallRatio": <number>,
-    "signal": "<string>",
-    "unusualActivity": "<describe notable flow, dark pool prints, or large block trades>"
-  },
-  "breadth": {
-    "advancers": <number pct>,
-    "decliners": <number pct>,
-    "signal": "<string>"
-  },
-  "macroEvents": [
-    {
-      "date": "<Today|Tomorrow|day name>",
-      "event": "<string>",
-      "impact": "<high|medium|low>",
-      "time": "<HH:MM AM/PM ET>"
-    }
-  ]
-}`;
+const PROMPT = `Today is ${TODAY_STR}. Search the web for live QQQ ETF data. Respond with ONLY a raw JSON object — no markdown, no backticks, no prose. Use this exact structure with real current values:
+{"qqq":{"price":0,"change":0,"changePct":0,"volume":"45M","avgVolume":"42M","dayHigh":0,"dayLow":0,"week52High":0,"week52Low":0,"marketStatus":"open"},"vix":{"value":0,"change":0,"signal":"Moderate"},"holdings":[{"symbol":"AAPL","name":"Apple","weight":9.1,"price":0,"change":0,"changePct":0,"signal":"bullish"},{"symbol":"MSFT","name":"Microsoft","weight":8.5,"price":0,"change":0,"changePct":0,"signal":"bullish"},{"symbol":"NVDA","name":"Nvidia","weight":8.0,"price":0,"change":0,"changePct":0,"signal":"bullish"},{"symbol":"AMZN","name":"Amazon","weight":5.2,"price":0,"change":0,"changePct":0,"signal":"neutral"},{"symbol":"META","name":"Meta","weight":4.8,"price":0,"change":0,"changePct":0,"signal":"neutral"},{"symbol":"GOOGL","name":"Alphabet A","weight":4.5,"price":0,"change":0,"changePct":0,"signal":"neutral"},{"symbol":"GOOG","name":"Alphabet C","weight":4.0,"price":0,"change":0,"changePct":0,"signal":"neutral"},{"symbol":"TSLA","name":"Tesla","weight":3.6,"price":0,"change":0,"changePct":0,"signal":"neutral"},{"symbol":"AVGO","name":"Broadcom","weight":3.2,"price":0,"change":0,"changePct":0,"signal":"neutral"},{"symbol":"COST","name":"Costco","weight":2.8,"price":0,"change":0,"changePct":0,"signal":"neutral"}],"technicals":{"trend":"Uptrend","rsi":55,"macdSignal":"bullish","support":[480,475],"resistance":[495,500],"aboveMA20":true,"aboveMA50":true,"aboveMA200":true,"volumeSignal":"Average"},"prediction":{"direction":"bullish","target1":495,"target2":500,"stopLoss":478,"confidence":65,"reasoning":"Brief 1-2 sentence analysis based on current technicals and macro.","patterns":["Bull Flag","Higher Lows"]},"optionsSentiment":{"putCallRatio":0.85,"signal":"Mildly Bullish","unusualActivity":"Brief flow note under 40 words."},"breadth":{"advancers":60,"decliners":40,"signal":"Positive"},"macroEvents":[{"date":"Today","event":"Event name","impact":"high","time":"8:30 AM ET"},{"date":"Tomorrow","event":"Event name","impact":"medium","time":"10:00 AM ET"}]}
+Replace ALL zero values and placeholder text with real current data from your web search.`;
 
 // ── Key management ───────────────────────────────────────────────────────────
 function getKey() { return localStorage.getItem('qqq_api_key') || ''; }
@@ -792,7 +722,7 @@ async function loadData() {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 1000,
+        max_tokens: 8000,
         system: 'You are a financial data analyst. Always respond with only a single valid JSON object. No markdown, no backticks, no explanation — raw JSON only.',
         tools: [{ type: 'web_search_20250305', name: 'web_search' }],
         messages: [{ role: 'user', content: PROMPT }]
