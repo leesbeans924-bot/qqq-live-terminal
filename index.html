@@ -39,7 +39,9 @@
       font-family: var(--sans);
       height: 100vh;
       overflow: hidden;
-      line-height: 1.5;
+      line-height: 1.4;
+      display: flex;
+      flex-direction: column;
     }
     /* Setup overlay */
     #setup-overlay {
@@ -75,18 +77,19 @@
     }
     .setup-note a { color: var(--blue); text-decoration: none; }
     /* App */
-    #app { max-width: 1280px; margin: 0 auto; padding: 0 16px 10px; }
+    #app { max-width: 1280px; margin: 0 auto; padding: 0 16px 4px; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
     /* Top bar */
     .topbar {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 0 10px;
+      padding: 6px 0;
       border-bottom: 1px solid var(--border);
-      margin-bottom: 10px;
-      flex-wrap: wrap; gap: 12px;
+      margin-bottom: 6px;
+      flex-wrap: wrap; gap: 8px;
+      flex-shrink: 0;
     }
     .topbar-left { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
     .qqq-ticker { font-family: var(--mono); font-size: 13px; color: var(--text2); letter-spacing: 2px; font-weight: 300; }
-    .qqq-price  { font-family: var(--mono); font-size: 24px; font-weight: 500; line-height: 1; }
+    .qqq-price  { font-family: var(--mono); font-size: 20px; font-weight: 500; line-height: 1; }
     .qqq-change { font-family: var(--mono); font-size: 15px; }
     .status-badge {
       font-size: 10px; font-weight: 500; letter-spacing: 1px;
@@ -115,7 +118,7 @@
     .error-bar {
       background: var(--red-bg); border: 1px solid rgba(240,79,90,0.3);
       color: var(--red); border-radius: var(--radius);
-      padding: 10px 16px; font-size: 12px; margin-bottom: 16px;
+      padding: 6px 12px; font-size: 11px; margin-bottom: 6px;
       display: none;
     }
     /* Loading */
@@ -127,17 +130,17 @@
     /* Metric cards */
     .metrics-row {
       display: grid; grid-template-columns: repeat(4, 1fr);
-      gap: 8px; margin-bottom: 8px;
+      gap: 5px; margin-bottom: 5px;
     }
     .metric-card {
       background: var(--bg2); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 8px 12px;
+      border-radius: var(--radius); padding: 5px 10px;
     }
     .metric-card .lbl { font-size: 9px; color: var(--text2); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 3px; }
-    .metric-card .val { font-family: var(--mono); font-size: 17px; font-weight: 500; line-height: 1.1; }
+    .metric-card .val { font-family: var(--mono); font-size: 15px; font-weight: 500; line-height: 1.1; }
     .metric-card .sub { font-size: 9px; color: var(--text3); margin-top: 2px; }
     /* Main grid */
-    .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+    .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 5px; }
     /* Panel */
     .panel {
       background: var(--bg2); border: 1px solid var(--border);
@@ -145,7 +148,7 @@
     }
     .panel-head {
       display: flex; align-items: center; gap: 8px;
-      padding: 7px 12px; border-bottom: 1px solid var(--border);
+      padding: 5px 10px; border-bottom: 1px solid var(--border);
     }
     .panel-head i { font-size: 15px; color: var(--text3); }
     .panel-head .title { font-size: 12px; font-weight: 500; letter-spacing: 0.3px; color: var(--text2); text-transform: uppercase; }
@@ -154,16 +157,16 @@
     .tbl { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
     .tbl thead tr { background: var(--bg3); }
     .tbl th {
-      padding: 4px 8px; text-align: right; font-size: 10px; font-weight: 500;
+      padding: 3px 8px; text-align: right; font-size: 10px; font-weight: 500;
       color: var(--text3); letter-spacing: 0.5px; cursor: pointer; user-select: none;
       text-transform: uppercase; white-space: nowrap;
     }
     .tbl th:first-child { text-align: left; }
     .tbl th:hover { color: var(--text2); }
-    .tbl td { padding: 5px 8px; text-align: right; border-top: 1px solid var(--border); }
+    .tbl td { padding: 3px 8px; text-align: right; border-top: 1px solid var(--border); }
     .tbl td:first-child { text-align: left; }
     .tbl tbody tr:hover td { background: var(--bg3); }
-    .tbl-scroll { overflow-y: auto; max-height: 260px; }
+    .tbl-scroll { overflow-y: auto; max-height: 220px; }
     /* Signal badge */
     .sig {
       font-size: 10px; font-weight: 500;
@@ -174,7 +177,7 @@
     .sig-bear { background: var(--red-bg); color: var(--red); }
     .sig-neut { background: var(--bg3); color: var(--text2); border: 1px solid var(--border2); }
     /* Prediction */
-    .pred-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 6px; margin-bottom: 8px; }
+    .pred-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 5px; margin-bottom: 6px; }
     .pred-cell { text-align: center; }
     .pred-cell .lbl { font-size: 9px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
     .pred-cell .val { font-family: var(--mono); font-size: 14px; font-weight: 500; }
@@ -197,7 +200,7 @@
     .ma-above { background: var(--green-bg); color: var(--green); }
     .ma-below { background: var(--red-bg); color: var(--red); }
     /* Bottom grid */
-    .bottom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+    .bottom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 5px; }
     /* Calendar */
     .cal-event { display: flex; align-items: flex-start; gap: 10px; }
     .cal-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
@@ -207,17 +210,17 @@
       font-family: var(--mono); flex-shrink: 0;
     }
     /* Quick ask */
-    .ask-grid { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 12px; }
+    .ask-grid { display: flex; flex-wrap: wrap; gap: 5px; padding: 6px 10px; }
     .ask-btn {
       background: var(--bg3); border: 1px solid var(--border2);
       color: var(--text2); border-radius: var(--radius);
-      font-family: var(--sans); font-size: 12px; padding: 7px 14px;
-      cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 6px;
+      font-family: var(--sans); font-size: 11px;
+      cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 5px; padding: 5px 10px;
     }
     .ask-btn:hover { background: var(--blue-bg); border-color: rgba(74,158,255,0.4); color: var(--blue); }
     /* Footer */
     .footer {
-      border-top: 1px solid var(--border); margin-top: 6px; padding-top: 8px;
+      border-top: 1px solid var(--border); margin-top: 4px; padding-top: 4px;
       display: flex; justify-content: space-between; align-items: center;
       font-size: 10px; color: var(--text3); flex-wrap: wrap; gap: 8px;
     }
@@ -349,7 +352,7 @@
       </div>
 
       <!-- RIGHT COLUMN -->
-      <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;flex-direction:column;gap:5px;">
 
         <!-- PREDICTION -->
         <div class="panel">
@@ -358,7 +361,7 @@
             <span class="title">Tomorrow's Prediction</span>
             <span id="pred-badge" class="sig sig-neut" style="margin-left:auto;">—</span>
           </div>
-          <div style="padding:8px 12px;">
+          <div style="padding:6px 10px;">
             <div class="pred-grid">
               <div class="pred-cell">
                 <div class="lbl">Target 1</div>
@@ -384,7 +387,7 @@
               </div>
               <div class="conf-track"><div class="conf-fill" id="pred-conf-bar" style="width:0%"></div></div>
             </div>
-            <p id="pred-reason" style="font-size:11px;color:var(--text2);margin-bottom:6px;line-height:1.5;"></p>
+            <p id="pred-reason" style="font-size:10.5px;color:var(--text2);margin-bottom:4px;line-height:1.4;"></p>
             <div id="pred-patterns" style="display:flex;flex-wrap:wrap;gap:5px;"></div>
           </div>
         </div>
@@ -395,8 +398,8 @@
             <i class="ti ti-chart-line"></i>
             <span class="title">Technical Signals</span>
           </div>
-          <div style="padding:8px 12px;">
-            <div class="tech-grid" style="margin-bottom:8px;">
+          <div style="padding:6px 10px;">
+            <div class="tech-grid" style="margin-bottom:5px;">
               <div class="tech-row">
                 <span class="lbl">Trend</span>
                 <span class="val" id="t-trend">—</span>
@@ -414,7 +417,7 @@
                 <span class="val" id="t-vol">—</span>
               </div>
             </div>
-            <div id="t-ma" style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px;"></div>
+            <div id="t-ma" style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;"></div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
               <div>
                 <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">Support</div>
@@ -440,18 +443,18 @@
           <i class="ti ti-arrows-exchange-2"></i>
           <span class="title">Options Flow</span>
         </div>
-        <div style="padding:8px 12px;">
-          <div style="display:flex;align-items:center;gap:16px;margin-bottom:8px;">
+        <div style="padding:6px 10px;">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:5px;">
             <div>
               <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Put / Call Ratio</div>
-              <div style="font-family:var(--mono);font-size:22px;font-weight:500;line-height:1;" id="opt-pcr">—</div>
+              <div style="font-family:var(--mono);font-size:18px;font-weight:500;line-height:1;" id="opt-pcr">—</div>
             </div>
             <div>
               <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Sentiment</div>
               <div style="font-size:14px;font-weight:500;" id="opt-sig">—</div>
             </div>
           </div>
-          <div style="border-top:1px solid var(--border);padding-top:8px;font-size:11px;color:var(--text2);line-height:1.6;" id="opt-activity"></div>
+          <div style="border-top:1px solid var(--border);padding-top:5px;font-size:10.5px;color:var(--text2);line-height:1.4;" id="opt-activity"></div>
         </div>
       </div>
 
@@ -461,7 +464,7 @@
           <i class="ti ti-calendar-event"></i>
           <span class="title">Economic Calendar</span>
         </div>
-        <div id="cal-body" style="padding:8px 12px;display:flex;flex-direction:column;gap:9px;"></div>
+        <div id="cal-body" style="padding:6px 10px;display:flex;flex-direction:column;gap:5px;"></div>
       </div>
 
     </div>
