@@ -245,7 +245,7 @@
     }
     .metrics-row { flex-shrink: 0; }
 
-    /* 2 columns: holdings left, panels right */
+    /* DESKTOP: 2 columns */
     .body-grid {
       flex: 1;
       display: grid;
@@ -254,41 +254,76 @@
       min-height: 0;
       overflow: hidden;
     }
-
-    /* Holdings stretches full height */
     .holdings-panel {
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
+      display: flex; flex-direction: column; min-height: 0;
     }
     .holdings-panel .tbl-scroll {
-      flex: 1;
-      overflow-y: auto;
-      max-height: none;
+      flex: 1; overflow-y: auto; max-height: none;
     }
-
-    /* Right column: prediction + technicals fill, options+cal fixed at bottom */
     .right-col {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      min-height: 0;
-      overflow: hidden;
+      display: flex; flex-direction: column;
+      gap: 6px; min-height: 0; overflow: hidden;
     }
     .r-panel { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
-    .r-body { flex: 1; overflow-y: auto; padding: 8px 12px; }
-
-    /* Options+Cal row fixed height */
+    .r-body  { flex: 1; overflow-y: auto; padding: 8px 12px; }
     .right-col .panel:last-child { flex: 0 0 160px; }
 
-    /* Deep dives single row no wrap */
+    /* Deep dives single row */
     .ask-grid { flex-wrap: nowrap; overflow-x: auto; padding: 6px 12px; gap: 6px; }
-    .ask-btn { white-space: nowrap; flex-shrink: 0; }
+    .ask-btn  { white-space: nowrap; flex-shrink: 0; }
 
-    @media (max-width: 760px) {
-      .metrics-row { grid-template-columns: repeat(2, 1fr); }
-      .body-grid { grid-template-columns: 1fr; }
-      .right-col .panel:last-child { flex: 0 0 auto; }
+    /* MOBILE: single column, scrollable */
+    @media (max-width: 700px) {
+      html, body { height: auto; overflow: auto; }
+      #app { overflow: auto; height: auto; }
+      #dashboard {
+        flex: none;
+        overflow: visible;
+        gap: 10px;
+        padding-bottom: 20px;
+      }
+      .metrics-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .body-grid {
+        display: flex;
+        flex-direction: column;
+        flex: none;
+        overflow: visible;
+        gap: 10px;
+      }
+      .holdings-panel {
+        min-height: 0;
+        max-height: none;
+      }
+      .holdings-panel .tbl-scroll {
+        max-height: 320px;
+        overflow-y: auto;
+      }
+      .right-col {
+        overflow: visible;
+        min-height: 0;
+        gap: 10px;
+      }
+      .r-panel { flex: none; min-height: 0; overflow: visible; }
+      .r-body  { overflow: visible; max-height: none; }
+      .right-col .panel:last-child { flex: none; height: auto; }
+      /* Options + Calendar stack vertically on mobile */
+      .right-col .panel:last-child > div {
+        grid-template-columns: 1fr !important;
+      }
+      .right-col .panel:last-child > div > div:first-child {
+        border-right: none !important;
+        border-bottom: 1px solid var(--border);
+      }
+      /* Deep dives wrap on mobile */
+      .ask-grid { flex-wrap: wrap; }
+      .ask-btn  { white-space: normal; flex-shrink: 1; font-size: 12px; }
+      /* Topbar stack on mobile */
+      .topbar { flex-direction: column; align-items: flex-start; gap: 6px; }
+      .topbar-right { width: 100%; justify-content: space-between; }
+      .qqq-price { font-size: 26px; }
     }
   </style>
 </head>
