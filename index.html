@@ -272,58 +272,73 @@
     .ask-grid { flex-wrap: nowrap; overflow-x: auto; padding: 6px 12px; gap: 6px; }
     .ask-btn  { white-space: nowrap; flex-shrink: 0; }
 
-    /* MOBILE: single column, scrollable */
+    /* ── Tab bar (mobile only) ── */
+    .tab-bar {
+      display: none;
+      flex-shrink: 0;
+    }
+    .tab-bar-inner {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 6px;
+    }
+    .tab-btn {
+      flex: 1; background: none; border: none; border-bottom: 2px solid transparent;
+      color: var(--text3); font-family: var(--sans); font-size: 12px; font-weight: 500;
+      letter-spacing: 0.5px; text-transform: uppercase; padding: 10px 8px;
+      cursor: pointer; transition: all 0.15s; margin-bottom: -1px;
+    }
+    .tab-btn.active { color: var(--blue); border-bottom-color: var(--blue); }
+    .tab-btn:hover  { color: var(--text); }
+
+    /* Tab panels */
+    .tab-pane { display: none; flex-direction: column; gap: 10px; }
+    .tab-pane.active { display: flex; }
+
+    /* MOBILE */
     @media (max-width: 700px) {
       html, body { height: auto; overflow: auto; }
-      #app { overflow: auto; height: auto; }
+      #app { overflow: auto; height: auto; flex: none; }
+
       #dashboard {
-        flex: none;
-        overflow: visible;
-        gap: 10px;
-        padding-bottom: 20px;
+        flex: none; overflow: visible; gap: 0; padding-bottom: 20px;
       }
       .metrics-row {
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
+        grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;
       }
-      .body-grid {
-        display: flex;
-        flex-direction: column;
-        flex: none;
-        overflow: visible;
-        gap: 10px;
-      }
-      .holdings-panel {
-        min-height: 0;
-        max-height: none;
-      }
+      /* Hide desktop body-grid, show tab system */
+      .body-grid { display: none !important; }
+      .tab-bar   { display: block; }
+      .tab-pane  { padding-bottom: 8px; }
+
+      /* Holdings in tab */
       .holdings-panel .tbl-scroll {
-        max-height: 320px;
-        overflow-y: auto;
+        max-height: 420px; overflow-y: auto;
       }
-      .right-col {
-        overflow: visible;
-        min-height: 0;
-        gap: 10px;
-      }
-      .r-panel { flex: none; min-height: 0; overflow: visible; }
+      .r-panel { flex: none; overflow: visible; }
       .r-body  { overflow: visible; max-height: none; }
-      .right-col .panel:last-child { flex: none; height: auto; }
-      /* Options + Calendar stack vertically on mobile */
-      .right-col .panel:last-child > div {
-        grid-template-columns: 1fr !important;
+
+      /* Options + Calendar stack on mobile */
+      .opts-cal-grid {
+        display: flex !important;
+        flex-direction: column !important;
       }
-      .right-col .panel:last-child > div > div:first-child {
+      .opts-cal-grid > div:first-child {
         border-right: none !important;
         border-bottom: 1px solid var(--border);
       }
-      /* Deep dives wrap on mobile */
-      .ask-grid { flex-wrap: wrap; }
-      .ask-btn  { white-space: normal; flex-shrink: 1; font-size: 12px; }
-      /* Topbar stack on mobile */
-      .topbar { flex-direction: column; align-items: flex-start; gap: 6px; }
-      .topbar-right { width: 100%; justify-content: space-between; }
-      .qqq-price { font-size: 26px; }
+
+      /* Deep dives wrap */
+      .ask-grid { flex-wrap: wrap; margin-top: 8px; }
+      .ask-btn  { white-space: normal; font-size: 12px; }
+
+      /* Topbar */
+      .topbar { flex-direction: row; flex-wrap: wrap; }
+      .qqq-price { font-size: 22px; }
+      .topbar-right { gap: 8px; }
+
+      /* Footer hide on mobile to save space */
+      .footer { display: none; }
     }
   </style>
 </head>
@@ -409,7 +424,136 @@
       </div>
     </div>
 
-    <!-- TWO COLUMNS -->
+    <!-- TAB BAR (mobile only) -->
+    <div class="tab-bar">
+      <div class="tab-bar-inner">
+        <button class="tab-btn active" onclick="switchTab('overview')">
+          <i class="ti ti-layout-dashboard"></i> Overview
+        </button>
+        <button class="tab-btn" onclick="switchTab('holdings')">
+          <i class="ti ti-list-details"></i> Holdings
+        </button>
+        <button class="tab-btn" onclick="switchTab('signals')">
+          <i class="ti ti-chart-line"></i> Signals
+        </button>
+      </div>
+
+      <!-- TAB: Overview -->
+      <div id="tab-overview" class="tab-pane active">
+        <!-- Prediction -->
+        <div class="panel r-panel">
+          <div class="panel-head">
+            <i class="ti ti-brain"></i>
+            <span class="title">Tomorrow's Prediction</span>
+            <span id="pred-badge-m" class="sig sig-neut" style="margin-left:auto;">—</span>
+          </div>
+          <div class="r-body" style="padding:10px 12px;">
+            <div class="pred-grid" style="margin-bottom:10px;">
+              <div class="pred-cell"><div class="lbl">Target 1</div><div class="val c-green" id="pred-t1-m">—</div></div>
+              <div class="pred-cell"><div class="lbl">Target 2</div><div class="val c-green" id="pred-t2-m">—</div></div>
+              <div class="pred-cell"><div class="lbl">Stop Loss</div><div class="val c-red" id="pred-sl-m">—</div></div>
+              <div class="pred-cell"><div class="lbl">R / R</div><div class="val" id="pred-rr-m">—</div></div>
+            </div>
+            <div style="margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                <span style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;">Confidence</span>
+                <span style="font-size:10px;font-family:var(--mono);font-weight:500;" id="pred-conf-label-m">—</span>
+              </div>
+              <div class="conf-track"><div class="conf-fill" id="pred-conf-bar-m" style="width:0%"></div></div>
+            </div>
+            <p id="pred-reason-m" style="font-size:12px;color:var(--text2);margin-bottom:8px;line-height:1.6;"></p>
+            <div id="pred-patterns-m" style="display:flex;flex-wrap:wrap;gap:5px;"></div>
+          </div>
+        </div>
+        <!-- Options + Calendar -->
+        <div class="panel">
+          <div class="opts-cal-grid" style="display:grid;grid-template-columns:1fr 1fr;">
+            <div style="border-right:1px solid var(--border);display:flex;flex-direction:column;">
+              <div class="panel-head" style="border-bottom:1px solid var(--border);">
+                <i class="ti ti-arrows-exchange-2"></i><span class="title">Options Flow</span>
+              </div>
+              <div style="padding:10px 12px;flex:1;">
+                <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:8px;">
+                  <div>
+                    <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;">Put / Call</div>
+                    <div style="font-family:var(--mono);font-size:24px;font-weight:500;line-height:1;" id="opt-pcr-m">—</div>
+                  </div>
+                  <div>
+                    <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;">Sentiment</div>
+                    <div style="font-size:13px;font-weight:500;" id="opt-sig-m">—</div>
+                  </div>
+                </div>
+                <div style="font-size:11px;color:var(--text2);line-height:1.5;border-top:1px solid var(--border);padding-top:8px;" id="opt-activity-m"></div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;">
+              <div class="panel-head" style="border-bottom:1px solid var(--border);">
+                <i class="ti ti-calendar-event"></i><span class="title">Calendar</span>
+              </div>
+              <div id="cal-body-m" style="padding:10px 12px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;"></div>
+            </div>
+          </div>
+        </div>
+        <!-- Deep dives -->
+        <div class="panel">
+          <div class="panel-head"><i class="ti ti-message-2-question"></i><span class="title">Deep Dives</span></div>
+          <div class="ask-grid" id="ask-grid-m"></div>
+        </div>
+      </div>
+
+      <!-- TAB: Holdings -->
+      <div id="tab-holdings" class="tab-pane">
+        <div class="panel holdings-panel">
+          <div class="panel-head">
+            <i class="ti ti-list-details"></i>
+            <span class="title">Top Holdings</span>
+            <span class="extra">tap to sort</span>
+          </div>
+          <div class="tbl-scroll">
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th style="width:68px" onclick="sortHoldings('symbol')">Sym</th>
+                  <th style="width:44px" onclick="sortHoldings('weight')">Wt%</th>
+                  <th style="width:72px" onclick="sortHoldings('price')">Price</th>
+                  <th style="width:62px" onclick="sortHoldings('changePct')">Chg%</th>
+                  <th style="cursor:default">Signal</th>
+                </tr>
+              </thead>
+              <tbody id="holdings-body-m"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: Signals -->
+      <div id="tab-signals" class="tab-pane">
+        <div class="panel r-panel">
+          <div class="panel-head"><i class="ti ti-chart-line"></i><span class="title">Technical Signals</span></div>
+          <div class="r-body" style="padding:10px 12px;">
+            <div class="tech-grid" style="margin-bottom:10px;">
+              <div class="tech-row"><span class="lbl">Trend</span><span class="val" id="t-trend-m">—</span></div>
+              <div class="tech-row"><span class="lbl">RSI (14)</span><span class="val" id="t-rsi-m">—</span></div>
+              <div class="tech-row"><span class="lbl">MACD</span><span class="val" id="t-macd-m">—</span></div>
+              <div class="tech-row"><span class="lbl">Volume</span><span class="val" id="t-vol-m">—</span></div>
+            </div>
+            <div id="t-ma-m" style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div>
+                <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">Support</div>
+                <div id="t-sup-m"></div>
+              </div>
+              <div>
+                <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">Resistance</div>
+                <div id="t-res-m"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- end tab-bar -->
+
+    <!-- TWO COLUMNS (desktop) -->
     <div class="body-grid">
 
       <!-- LEFT: HOLDINGS -->
@@ -750,6 +894,7 @@ function applyData(d) {
 
   document.getElementById('loading-state').style.display = 'none';
   document.getElementById('dashboard').style.display = 'block';
+  applyMobile(d);
 }
 
 // ── Fetch data ───────────────────────────────────────────────────────────────
@@ -838,6 +983,108 @@ document.querySelectorAll('.ask-btn').forEach(btn => {
     window.open('https://claude.ai/new?q=' + encodeURIComponent(prompt), '_blank');
   });
 });
+
+// ── Tab switching ────────────────────────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    if (b.getAttribute('onclick').includes("'" + name + "'")) b.classList.add('active');
+  });
+}
+
+// ── Populate mobile panels ───────────────────────────────────────────────────
+function applyMobile(d) {
+  const q = d.qqq || {}, p = d.prediction || {}, t = d.technicals || {};
+  const o = d.optionsSentiment || {};
+
+  // Prediction mobile
+  const dir = p.direction || 'neutral';
+  const pb = document.getElementById('pred-badge-m');
+  if (pb) { pb.textContent = (dir==='bullish'?'▲ ':dir==='bearish'?'▼ ':'→ ')+dir.toUpperCase(); pb.className='sig '+(dir==='bullish'?'sig-bull':dir==='bearish'?'sig-bear':'sig-neut'); }
+  setText('pred-t1-m', p.target1 != null ? fmtD(p.target1) : '—');
+  setText('pred-t2-m', p.target2 != null ? fmtD(p.target2) : '—');
+  setText('pred-sl-m', p.stopLoss != null ? fmtD(p.stopLoss) : '—');
+  const rr = (p.target1 && p.stopLoss && q.price && (q.price-p.stopLoss)>0) ? ((p.target1-q.price)/(q.price-p.stopLoss)).toFixed(2) : null;
+  const rrm = document.getElementById('pred-rr-m');
+  if (rrm) { rrm.textContent = rr ? rr+':1':'—'; rrm.style.color = rr>=2?'var(--green)':rr>=1?'var(--amber)':'var(--red)'; }
+  const conf = p.confidence||0;
+  setText('pred-conf-label-m', conf+'%');
+  const barm = document.getElementById('pred-conf-bar-m');
+  if (barm) { barm.style.width=conf+'%'; barm.style.background=conf>=65?'var(--green)':conf>=45?'var(--amber)':'var(--red)'; }
+  setText('pred-reason-m', p.reasoning||'');
+  set('pred-patterns-m', (p.patterns||[]).map(pt=>`<span class="pattern-tag">${pt}</span>`).join(''));
+
+  // Options mobile
+  const pcrm = document.getElementById('opt-pcr-m');
+  if (pcrm) { pcrm.textContent = o.putCallRatio!=null?o.putCallRatio.toFixed(2):'—'; pcrm.style.color=o.putCallRatio<0.8?'var(--green)':o.putCallRatio>1.1?'var(--red)':'var(--amber)'; }
+  const osm = document.getElementById('opt-sig-m');
+  if (osm) { osm.textContent=o.signal||'—'; osm.style.color=o.putCallRatio<0.8?'var(--green)':o.putCallRatio>1.1?'var(--red)':'var(--amber)'; }
+  setText('opt-activity-m', o.unusualActivity||'—');
+
+  // Calendar mobile
+  const events = d.macroEvents||[];
+  set('cal-body-m', events.length===0
+    ? '<p style="font-size:12px;color:var(--text2);margin:0;">No upcoming events</p>'
+    : events.slice(0,5).map((e,i)=>{
+        const dotC=e.impact==='high'?'var(--red)':e.impact==='medium'?'var(--amber)':'var(--text3)';
+        const bdg=e.impact==='high'?'var(--red-bg);color:var(--red)':e.impact==='medium'?'var(--amber-bg);color:var(--amber)':'var(--bg3);color:var(--text3)';
+        return `<div style="display:flex;align-items:flex-start;gap:8px;${i<events.length-1?'padding-bottom:7px;border-bottom:1px solid var(--border)':''}">
+          <div style="width:7px;height:7px;border-radius:50%;background:${dotC};flex-shrink:0;margin-top:4px;"></div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:12px;font-weight:500;">${e.event}</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:1px;">${e.date} · ${e.time}</div>
+          </div>
+          <span style="font-size:9px;padding:2px 5px;border-radius:3px;background:${bdg};font-weight:600;flex-shrink:0;">${e.impact}</span>
+        </div>`;
+      }).join('')
+  );
+
+  // Holdings mobile (same table, different tbody)
+  const hbm = document.getElementById('holdings-body-m');
+  if (hbm) {
+    hbm.innerHTML = (d.holdings||[]).map(h=>{
+      const sigClass=h.signal==='bullish'?'sig-bull':h.signal==='bearish'?'sig-bear':'sig-neut';
+      const sigIcon=h.signal==='bullish'?'▲':h.signal==='bearish'?'▼':'—';
+      return `<tr>
+        <td><div style="font-weight:500;font-size:12px;font-family:var(--mono)">${h.symbol||'—'}</div><div style="font-size:9px;color:var(--text3)">${(h.name||'').split(' ').slice(0,2).join(' ')}</div></td>
+        <td style="color:var(--text2);font-family:var(--mono)">${h.weight!=null?h.weight.toFixed(1)+'%':'—'}</td>
+        <td style="font-family:var(--mono)">${h.price!=null?'$'+h.price.toFixed(2):'—'}</td>
+        <td style="font-family:var(--mono);color:${cc(h.changePct)}">${fmtP(h.changePct)}</td>
+        <td><span class="sig ${sigClass}">${sigIcon} ${h.signal||'—'}</span></td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Technicals mobile
+  const trendm = document.getElementById('t-trend-m');
+  if (trendm) { trendm.textContent=t.trend||'—'; trendm.style.color=(t.trend||'').includes('Up')?'var(--green)':(t.trend||'').includes('Down')?'var(--red)':'var(--amber)'; }
+  const rsim = document.getElementById('t-rsi-m');
+  if (rsim) { rsim.textContent=t.rsi!=null?(t.rsi>70?t.rsi.toFixed(1)+' OB':t.rsi<30?t.rsi.toFixed(1)+' OS':t.rsi.toFixed(1)):'—'; rsim.style.color=t.rsi>70?'var(--red)':t.rsi<30?'var(--green)':'var(--text)'; }
+  const macdm = document.getElementById('t-macd-m');
+  if (macdm) { macdm.textContent=t.macdSignal||'—'; macdm.style.color=sc(t.macdSignal); }
+  setText('t-vol-m', t.volumeSignal||'—');
+  set('t-ma-m', [['MA20',t.aboveMA20],['MA50',t.aboveMA50],['MA200',t.aboveMA200]].map(([l,a])=>
+    `<span class="ma-pill ${a?'ma-above':'ma-below'}">${a?'▲':'▼'} ${l}</span>`).join(''));
+  set('t-sup-m', (t.support||[]).map(s=>`<div style="font-family:var(--mono);font-size:14px;font-weight:500;color:var(--green);padding:2px 0;">${fmtD(s)}</div>`).join(''));
+  set('t-res-m', (t.resistance||[]).map(r=>`<div style="font-family:var(--mono);font-size:14px;font-weight:500;color:var(--red);padding:2px 0;">${fmtD(r)}</div>`).join(''));
+
+  // Deep dives mobile — clone buttons
+  const askm = document.getElementById('ask-grid-m');
+  if (askm) {
+    askm.innerHTML = [
+      ['Options strategies','Based on current QQQ data, what are the best options strategies right now? Include specific strikes and expirations.'],
+      ['Key levels','What are the key QQQ technical levels to watch this week?'],
+      ['Semis + mega-cap','How are semiconductors and mega-cap tech performing? What does it mean for QQQ?'],
+      ['Macro risk scan','What macro events in the next 5 days could move QQQ? Assign risk levels.'],
+      ['Bull vs Bear','Give me a QQQ bull case and bear case for the next 2 weeks.'],
+      ['Options chain','Analyze QQQ options chain for unusual activity and gamma exposure.']
+    ].map(([label, prompt]) =>
+      `<button class="ask-btn" onclick="window.open('https://claude.ai/new?q='+encodeURIComponent('${prompt.replace(/'/g,"\'")}'),'_blank')"><i class="ti ti-external-link"></i> ${label}</button>`
+    ).join('');
+  }
+}
 
 // ── Init ─────────────────────────────────────────────────────────────────────
 if (getKey()) {
